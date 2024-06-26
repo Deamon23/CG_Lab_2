@@ -4,11 +4,11 @@
 
 // Конструктор класса PyramidWidget
 PyramidWidget::PyramidWidget(QWidget *parent)
-    : QOpenGLWidget(parent), x0(50) // Инициализация начального значения x0
+    : QOpenGLWidget(parent), x0(50), y0(20) // Инициализация начальных значений
 {
     // Подключение таймера к слоту обновления вида
     connect(&timer, &QTimer::timeout, this, &PyramidWidget::updateView);
-    timer.start(100); // Запуск таймера с интервалом 1 секунда
+    timer.start(100);
 }
 
 // Деструктор класса PyramidWidget
