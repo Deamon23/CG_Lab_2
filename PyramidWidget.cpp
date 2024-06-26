@@ -8,7 +8,7 @@ PyramidWidget::PyramidWidget(QWidget *parent)
 {
     // Подключение таймера к слоту обновления вида
     connect(&timer, &QTimer::timeout, this, &PyramidWidget::updateView);
-    timer.start(1000); // Запуск таймера с интервалом 1 секунда
+    timer.start(200); // Запуск таймера с интервалом 1 секунда
 }
 
 // Деструктор класса PyramidWidget
@@ -41,7 +41,7 @@ void PyramidWidget::paintGL()
 
     // Настройка вида (камера)
     // Камера находится в точке (x0, 10, 50), смотрит на точку (0, 0, 0), верхний вектор направлен вдоль оси z
-    projection.lookAt(QVector3D(x0, 10, 50), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
+    projection.lookAt(QVector3D(x0, 20, 50), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
 
     // Настройка модели
     QMatrix4x4 modelView;
