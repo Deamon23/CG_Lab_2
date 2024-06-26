@@ -8,7 +8,7 @@ PyramidWidget::PyramidWidget(QWidget *parent)
 {
     // Подключение таймера к слоту обновления вида
     connect(&timer, &QTimer::timeout, this, &PyramidWidget::updateView);
-    timer.start(200); // Запуск таймера с интервалом 1 секунда
+    timer.start(100); // Запуск таймера с интервалом 1 секунда
 }
 
 // Деструктор класса PyramidWidget
@@ -40,8 +40,8 @@ void PyramidWidget::paintGL()
     projection.perspective(45.0f, float(width()) / height(), 0.1f, 100.0f); // Установка перспективной проекции
 
     // Настройка вида (камера)
-    // Камера находится в точке (x0, 10, 50), смотрит на точку (0, 0, 0), верхний вектор направлен вдоль оси z
-    projection.lookAt(QVector3D(x0, 20, 50), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
+    // Камера находится в точке (x0, y0, 50), смотрит на точку (0, 0, 0), верхний вектор направлен вдоль оси z
+    projection.lookAt(QVector3D(x0, y0, 50), QVector3D(0, 0, 0), QVector3D(0, 0, 1));
 
     // Настройка модели
     QMatrix4x4 modelView;
@@ -114,7 +114,9 @@ void PyramidWidget::paintGL()
 // Обновление точки зрения
 void PyramidWidget::updateView()
 {
-    x0 -= 10; // Уменьшение координаты x0
-    if (x0 < -50) x0 = 50; // Возврат к начальному значению при достижении предела
+    if (y0 == 20) x0 -= 5;
+    if (x0 == -50) y0 -= 5;
+    if (y0 == -20) x0 += 5;
+    if (x0 == 50) y0 += 5;
     update(); // Перерисовка сцены
 }
