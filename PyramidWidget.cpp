@@ -45,28 +45,31 @@ void PyramidWidget::paintGL()
 
     // Настройка модели
     QMatrix4x4 modelView;
-    modelView.translate(0, 0, -5); // Перемещение модели по оси z
 
     // Вычисление матрицы модели-проекции
     QMatrix4x4 mvp = projection * modelView;
 
     // Настройка шейдерной программы
     QOpenGLShaderProgram program;
+
+    // Добавление вершинного шейдера
     program.addShaderFromSourceCode(QOpenGLShader::Vertex, R"(
-        attribute vec3 vertexPosition;
-        attribute vec3 vertexColor;
-        varying vec3 fragColor;
-        uniform mat4 mvpMatrix;
-        void main() {
-            fragColor = vertexColor;
-            gl_Position = mvpMatrix * vec4(vertexPosition, 1.0);
-        }
+    attribute vec3 vertexPosition;              // Атрибут для позиции вершины
+    attribute vec3 vertexColor;                 // Атрибут для цвета вершины
+    varying vec3 fragColor;                     // Переменная для передачи цвета во фрагментный шейдер
+    uniform mat4 mvpMatrix;                     // Матрица модели-вида-проекции
+    void main() {
+        fragColor = vertexColor;                // Передача цвета вершины
+        gl_Position = mvpMatrix * vec4(vertexPosition, 1.0); // Вычисление итоговой позиции вершины
+    }
     )");
+
+    // Добавление фрагментного шейдера
     program.addShaderFromSourceCode(QOpenGLShader::Fragment, R"(
-        varying vec3 fragColor;
-        void main() {
-            gl_FragColor = vec4(fragColor, 1.0);
-        }
+    varying vec3 fragColor;                     // Переменная для приема цвета из вершинного шейдера
+    void main() {
+        gl_FragColor = vec4(fragColor, 1.0);    // Установка цвета пикселя на основе цвета вершины
+    }
     )");
     program.link(); // Компиляция и линковка шейдеров
     program.bind(); // Активация шейдерной программы
@@ -74,7 +77,8 @@ void PyramidWidget::paintGL()
     program.setUniformValue("mvpMatrix", mvp); // Передача матрицы модели-проекции в шейдер
 
     // Определение вершин пирамиды и их цветов
-    GLfloat vertices[] = {
+    // Определение вершин пирамиды и их цветов
+    GLfloat Ver[] = {
         // Координаты вершин и цвета
         -10.0f, -5.0f, 0.0f,  1.0f, 0.0f, 0.0f, // Нижняя левая вершина основания (красный)
         10.0f, -5.0f, 0.0f,  0.0f, 1.0f, 0.0f, // Нижняя правая вершина основания (зеленый)
@@ -84,7 +88,7 @@ void PyramidWidget::paintGL()
     };
 
     // Определение индексов вершин для отрисовки граней пирамиды линиями
-    GLuint indices[] = {
+    GLuint Reb[] = {
         0, 1, // Основание
         1, 2,
         2, 3,
@@ -97,13 +101,13 @@ void PyramidWidget::paintGL()
 
     // Активация и настройка атрибутов вершин
     program.enableAttributeArray("vertexPosition");
-    program.setAttributeArray("vertexPosition", GL_FLOAT, vertices, 3, 6 * sizeof(GLfloat));
+    program.setAttributeArray("vertexPosition", GL_FLOAT, Ver, 3, 6 * sizeof(GLfloat));
 
     program.enableAttributeArray("vertexColor");
-    program.setAttributeArray("vertexColor", GL_FLOAT, vertices + 3, 3, 6 * sizeof(GLfloat));
+    program.setAttributeArray("vertexColor", GL_FLOAT, Ver + 3, 3, 6 * sizeof(GLfloat));
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // Установка режима wireframe (отрисовка только линий)
-    glDrawElements(GL_LINES, 16, GL_UNSIGNED_INT, indices); // Отрисовка пирамиды линиями
+    glDrawElements(GL_LINES, 16, GL_UNSIGNED_INT, Reb); // Отрисовка пирамиды линиями
 
     // Деактивация атрибутов вершин
     program.disableAttributeArray("vertexPosition");
